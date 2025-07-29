@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Request Modal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:url("wb.webp");
+            background-size: cover;
+
+            /* background: rgb(0 0 0 / 25%); */
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal-box {
+            background: white;
+            border-radius: 8px;
+            max-width: 700px; /* Reduced from 700px */
+            width: 100%;
+            min-height: min-content;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            animation: modalSlideIn 0.3s ease-out;
+            margin: 20px auto;
+            flex-shrink: 0;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            width: 28px;
+            height: 28px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            z-index: 10;
+            background: transparent;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .modal-close:hover {
+            transform: rotate(90deg) scale(1.3, 1.3);
+        }
+
+        .modal-header {
+            padding: 18px 28px 14px;
+            text-align: left;
+        }
+
+        .modal-title {
+            font-size: 22px; /* Reduced from 24px */
+            font-weight: 400;
+            color: #1a1a1a;
+            margin-top: 24px; /* Reduced from 28px */
+            margin-bottom: 18px; /* Reduced from 22px */
+            line-height: 1.2;
+        }
+
+        .modal-title strong {
+            color: #4f46e5;
+        }
+
+        .modal-description {
+            font-size: 13px; /* Reduced from 14px */
+            color: #6b7280;
+            line-height: 1.5;
+            padding-left: 8px; /* Reduced from 10px */
+            padding-right: 8px;
+        }
+
+        .modal-body {
+            padding: 0 26px 26px; /* Reduced from 30px */
+        }
+
+        .option-selector {
+            display: flex;
+            gap: 10px; /* Reduced from 12px */
+            margin-bottom: 10px; /* Reduced from 12px */
+        }
+
+        .option-item {
+            flex: 1;
+            padding: 12px; /* Reduced from 14px */
+            border: 1px solid #c8d3da;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px; /* Reduced from 12px */
+        }
+
+        .option-item.selected {
+            border-color: #4f46e5;
+            background: #f8faff;
+        }
+
+        .option-item:hover {
+            border-color: #9ca3af;
+        }
+
+        .option-icon {
+            width: 22px; /* Reduced from 24px */
+            height: 22px;
+            color: #6b7280;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .option-content h6 {
+            font-size: 15px; /* Reduced from 16px */
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 3px; /* Reduced from 4px */
+        }
+
+        .option-content p {
+            font-size: 13px; /* Reduced from 14px */
+            color: #6b7280;
+            line-height: 1.4;
+        }
+
+        .form-container {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px 20px 0px 20px; /* Reduced from 24px */
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px; /* Reduced from 16px */
+            margin-bottom: 18px; /* Reduced from 20px */
+        }
+
+        .form-row.single {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px; /* Reduced from 14px */
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 7px; /* Reduced from 8px */
+        }
+
+        .required {
+            color: #ef4444;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 10px 14px; /* Reduced from 12px 16px */
+            border: 2px solid #e5e7eb;
+            border-radius: 4px;
+            font-size: 15px; /* Reduced from 16px */
+            background: white;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .form-select {
+            cursor: pointer;
+        }
+
+        .checkbox-container {
+            margin: 20px 0; /* Reduced from 24px */
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px; /* Reduced from 12px */
+        }
+
+        .checkbox-input {
+            width: 16px; /* Reduced from 18px */
+            height: 16px;
+            margin-top: 2px;
+            cursor: pointer;
+        }
+
+        .checkbox-label {
+            font-size: 10px; /* Reduced from 11px */
+            color: #374151;
+            line-height: 1.5;
+        }
+
+        .checkbox-label a {
+            color: #4f46e5;
+            text-decoration: none;
+        }
+
+        .checkbox-label a:hover {
+            text-decoration: underline;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 14px; /* Reduced from 16px */
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 15px; /* Reduced from 16px */
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 6px; /* Reduced from 8px */
+        }
+
+        .submit-button:hover {
+            background: #4338ca;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+
+        .submit-button:active {
+            transform: translateY(0);
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .modal-overlay {
+                padding: 10px;
+                align-items: flex-start;
+            }
+            
+            .modal-box {
+                max-width: 100%;
+                margin: 5px auto;
+                max-height: calc(100vh - 20px);
+            }
+            
+            .modal-header {
+                padding: 15px 20px 12px;
+            }
+            
+            .modal-body {
+                padding: 0 20px 20px;
+            }
+            
+            .modal-title {
+                font-size: 20px;
+                margin-top: 20px;
+                margin-bottom: 15px;
+            }
+            
+            .modal-description {
+                font-size: 12px;
+                padding-left: 5px;
+                padding-right: 5px;
+            }
+            
+            .option-selector {
+                flex-direction: column;
+                gap: 8px;
+                margin-bottom: 15px;
+            }
+            
+            .option-item {
+                padding: 10px;
+                gap: 8px;
+            }
+            
+            .option-content h6 {
+                font-size: 14px;
+            }
+            
+            .option-content p {
+                font-size: 12px;
+            }
+            
+            .form-container {
+                padding: 15px 15px 0px 15px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                margin-bottom: 15px;
+            }
+            
+            .form-input, .form-select {
+                padding: 9px 12px;
+                font-size: 14px;
+            }
+            
+            .form-label {
+                font-size: 12px;
+                margin-bottom: 6px;
+            }
+            
+            .checkbox-container {
+                margin: 15px 0;
+            }
+            
+            .checkbox-label {
+                font-size: 9px;
+            }
+            
+            .checkbox-input {
+                width: 14px;
+                height: 14px;
+            }
+            
+            .submit-button {
+                padding: 12px;
+                font-size: 14px;
+            }
+            
+            .modal-close {
+                top: 15px;
+                right: 15px;
+                width: 24px;
+                height: 24px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-height: 700px) {
+            .modal-overlay {
+                align-items: flex-start;
+                padding: 8px;
+            }
+            
+            .modal-box {
+                margin: 8px auto;
+                max-height: calc(100vh - 16px);
+            }
+            
+            .modal-header {
+                padding: 15px 24px 12px;
+            }
+            
+            .modal-body {
+                padding: 0 24px 18px;
+            }
+            
+            .option-selector {
+                margin-bottom: 15px;
+            }
+            
+            .form-container {
+                padding: 15px;
+            }
+            
+            .modal-title {
+                margin-top: 18px;
+                margin-bottom: 12px;
+            }
+        }
+
+        /* Icon styles */
+        .user-icon::before {
+            content: "👤";
+        }
+
+        .play-icon::before {
+            content: "▶️";
+        }
+
+        /* Demo button */
+        .demo-trigger {
+            padding: 12px 24px;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <button class="demo-trigger" onclick="openModal()">Ouvrir le modal</button>
+
+    <div class="modal-overlay" id="modalOverlay" style="display: none;">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeModal()">
+                ×
+            </button>
+
+            <div class="modal-header">
+                <h1 class="modal-title">
+                    Besoin d'une démo<strong> Rainbow Webinar </strong>?
+                </h1>
+                <p class="modal-description">
+                    Laissez vos informations pour planifier une démonstration avec notre équipe de vente. 
+                    Nous vous montrerons les fonctionnalités importantes pour vous et répondrons à vos questions.
+                </p>
+            </div>
+
+            <div class="modal-body">
+                <div class="option-selector">
+                    <div class="option-item selected" data-option="demo">
+                        <div class="option-icon user-icon"></div>
+                        <div class="option-content">
+                            <h6>Réserver une démo</h6>
+                            <p>Discuter de nos plans Entreprise et Business avec notre équipe commerciale</p>
+                        </div>
+                    </div>
+                    <div class="option-item" data-option="video">
+                        <div class="option-icon play-icon"></div>
+                        <div class="option-content">
+                            <h6>Regarder une vidéo</h6>
+                            <p>Accéder à une vidéo préenregistrée de présentation du produit</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form class="form-container" id="demoForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="firstName">
+                                Prénom <span class="required">*</span>
+                            </label>
+                            <input type="text" id="firstName" name="firstName" class="form-input" placeholder="Jane" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="lastName">
+                                Nom <span class="required">*</span>
+                            </label>
+                            <input type="text" id="lastName" name="lastName" class="form-input" placeholder="Doe" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="email">
+                                Email <span class="required">*</span>
+                            </label>
+                            <input type="email" id="email" name="email" class="form-input" placeholder="jane@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="phone">
+                                Téléphone
+                            </label>
+                            <input type="tel" id="phone" name="phone" class="form-input" placeholder="+33123456789">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="company">
+                                Entreprise <span class="required">*</span>
+                            </label>
+                            <input type="text" id="company" name="company" class="form-input" placeholder="Acme" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="companySize">
+                                Taille d'entreprise <span class="required">*</span>
+                            </label>
+                            <select id="companySize" name="companySize" class="form-select" required>
+                                <option value="">Veuillez sélectionner</option>
+                                <option value="1-10">1-10</option>
+                                <option value="11-50">11-50</option>
+                                <option value="51-250">51-250</option>
+                                <option value="251-1K">251-1K</option>
+                                <option value="1K-5K">1K-5K</option>
+                                <option value="5K-10K">5K-10K</option>
+                                <option value="10K-50K">10K-50K</option>
+                                <option value="50K-100K">50K-100K</option>
+                                <option value="100K+">100K+</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row single">
+                        <div class="form-group">
+                            <label class="form-label" for="country">
+                                Pays/Région <span class="required">*</span>
+                            </label>
+                            <select id="country" name="country" class="form-select" required>
+                                <option value="">Veuillez sélectionner</option>
+                                <option value="France" selected>France</option>
+                                <option value="Belgium">Belgium</option>
+                                <option value="Canada">Canada</option>
+                                <option value="Germany">Germany</option>
+                                <option value="Spain">Spain</option>
+                                <option value="United Kingdom">United Kingdom</option>
+                                <option value="United States">United States</option>
+                                <option value="Other">Autre</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="checkbox-container">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="consent" name="consent" class="checkbox-input" required>
+                            <label for="consent" class="checkbox-label">
+                                J'accepte les <a href="#" target="_blank">Conditions Générales de Rainbow</a> 
+                                et je reconnais avoir été informé(e) et consentir au traitement de mes données personnelles 
+                                détaillées dans la <a href="#" target="_blank">Politique de confidentialité de Rainbow</a>.
+                                <span class="required">*</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-button">
+                        Réserver une démo
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal functionality
+        function openModal() {
+            document.getElementById('modalOverlay').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Close modal with escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Option selector functionality
+        document.querySelectorAll('.option-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.option-item').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                
+                const submitButton = document.querySelector('.submit-button');
+                if (this.dataset.option === 'video') {
+                    submitButton.textContent = 'Accéder à la vidéo';
+                } else {
+                    submitButton.textContent = 'Réserver une démo';
+                }
+            });
+        });
+
+        // Form submission
+        document.getElementById('demoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(this);
+            const selectedOption = document.querySelector('.option-item.selected').dataset.option;
+            
+            // Show success message
+            alert(`Merci ! Votre demande de ${selectedOption === 'video' ? 'vidéo' : 'démo'} a été envoyée avec succès.`);
+            
+            // Close modal and reset form
+            closeModal();
+            this.reset();
+            
+            // Reset option selection
+            document.querySelectorAll('.option-item').forEach(opt => opt.classList.remove('selected'));
+            document.querySelector('[data-option="demo"]').classList.add('selected');
+            document.querySelector('.submit-button').textContent = 'Réserver une démo';
+        });
+
+        // Auto-open modal for demo (remove this in production)
+        setTimeout(() => {
+            openModal();
+        }, 1000);
+    </script>
+</body>
+</html>
