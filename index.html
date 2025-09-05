@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Demo Request Modal</title>
+    <title>Demo Request Form</title>
     <style>
-
         * {
             margin: 0;
             padding: 0;
@@ -15,131 +14,66 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #ffffff;
+            background-image: url("wb.webp");
+            background-size: cover;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
-        }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url("wb.webp");
-            background-size: cover;
-
-            /* background: rgb(0 0 0 / 25%); */
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            z-index: 1000;
             backdrop-filter: blur(8px);
-            padding: 20px;
-            overflow-y: auto;
         }
 
-        .modal-box {
+        .form-container-wrapper {
             background: white;
             border-radius: 8px;
             max-width: 700px;
-            /* Reduced from 700px */
             width: 100%;
             min-height: min-content;
-            max-height: calc(100vh - 40px);
-            overflow-y: auto;
             position: relative;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-            animation: modalSlideIn 0.3s ease-out;
             margin: 20px auto;
-            flex-shrink: 0;
         }
 
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-50px) scale(0.95);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 18px;
-            right: 18px;
-            width: 28px;
-            height: 28px;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            transition: all 0.2s ease;
-            z-index: 10;
-            background: transparent;
-            transition: transform 0.3s ease-in-out;
-        }
-
-        .modal-close:hover {
-            transform: rotate(90deg) scale(1.3, 1.3);
-        }
-
-        .modal-header {
+        .form-header {
             padding: 18px 28px 14px;
             text-align: left;
         }
 
-        .modal-title {
+        .form-title {
             font-size: 22px;
-            /* Reduced from 24px */
             font-weight: 400;
             color: #1a1a1a;
             margin-top: 24px;
-            /* Reduced from 28px */
             margin-bottom: 18px;
-            /* Reduced from 22px */
             line-height: 1.2;
         }
 
-        .modal-title strong {
+        .form-title strong {
             color: #4f46e5;
         }
 
-        .modal-description {
+        .form-description {
             font-size: 13px;
-            /* Reduced from 14px */
             color: #6b7280;
             line-height: 1.5;
             padding-left: 8px;
-            /* Reduced from 10px */
             padding-right: 8px;
         }
 
-        .modal-body {
+        .form-body {
             padding: 0 26px 26px;
-            /* Reduced from 30px */
         }
 
         .option-selector {
             display: flex;
             gap: 10px;
-            /* Reduced from 12px */
             margin-bottom: 10px;
-            /* Reduced from 12px */
         }
 
         .option-item {
             flex: 1;
             padding: 12px;
-            /* Reduced from 14px */
             border: 1px solid #c8d3da;
             border-radius: 8px;
             cursor: pointer;
@@ -147,14 +81,12 @@
             display: flex;
             align-items: flex-start;
             gap: 10px;
-            /* Reduced from 12px */
         }
 
         .option-item-dim {
             flex: 1;
             position: relative;
             padding: 12px;
-            /* Reduced from 14px */
             border: 1px solid #cfd7db;
             border-radius: 8px;
             cursor: not-allowed;
@@ -162,7 +94,6 @@
             display: flex;
             align-items: flex-start;
             gap: 10px;
-            /* Reduced from 12px */
             background-color: #efeff0;
         }
 
@@ -177,7 +108,6 @@
 
         .option-icon {
             width: 22px;
-            /* Reduced from 24px */
             height: 22px;
             color: #6b7280;
             flex-shrink: 0;
@@ -186,16 +116,13 @@
 
         .option-content h6 {
             font-size: 15px;
-            /* Reduced from 16px */
             font-weight: 600;
             color: #1a1a1a;
             margin-bottom: 3px;
-            /* Reduced from 4px */
         }
 
         .option-content p {
             font-size: 13px;
-            /* Reduced from 14px */
             color: #6b7280;
             line-height: 1.4;
         }
@@ -204,16 +131,13 @@
             background: #f8f9fa;
             border-radius: 8px;
             padding: 20px 20px 0px 20px;
-            /* Reduced from 24px */
         }
 
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 14px;
-            /* Reduced from 16px */
             margin-bottom: 18px;
-            /* Reduced from 20px */
         }
 
         .form-row.single {
@@ -227,11 +151,9 @@
         .form-label {
             display: block;
             font-size: 13px;
-            /* Reduced from 14px */
             font-weight: 600;
             color: #374151;
             margin-bottom: 7px;
-            /* Reduced from 8px */
         }
 
         .required {
@@ -242,11 +164,9 @@
         .form-select {
             width: 100%;
             padding: 10px 14px;
-            /* Reduced from 12px 16px */
             border: 2px solid #e5e7eb;
             border-radius: 4px;
             font-size: 15px;
-            /* Reduced from 16px */
             background: white;
             transition: all 0.2s ease;
             font-family: inherit;
@@ -265,19 +185,16 @@
 
         .checkbox-container {
             margin: 20px 0;
-            /* Reduced from 24px */
         }
 
         .checkbox-wrapper {
             display: flex;
             align-items: flex-start;
             gap: 10px;
-            /* Reduced from 12px */
         }
 
         .checkbox-input {
             width: 16px;
-            /* Reduced from 18px */
             height: 16px;
             margin-top: 2px;
             cursor: pointer;
@@ -285,7 +202,6 @@
 
         .checkbox-label {
             font-size: 10px;
-            /* Reduced from 11px */
             color: #374151;
             line-height: 1.5;
         }
@@ -302,18 +218,15 @@
         .submit-button {
             width: 100%;
             padding: 14px;
-            /* Reduced from 16px */
             background: #4f46e5;
             color: white;
             border: none;
             border-radius: 4px;
             font-size: 15px;
-            /* Reduced from 16px */
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
             margin-top: 6px;
-            /* Reduced from 8px */
         }
 
         .submit-button:hover {
@@ -325,35 +238,32 @@
         .submit-button:active {
             transform: translateY(0);
         }
-
-        /* Mobile optimizations */
         @media (max-width: 768px) {
-            .modal-overlay {
+            body {
                 padding: 10px;
                 align-items: flex-start;
             }
 
-            .modal-box {
+            .form-container-wrapper {
                 max-width: 100%;
                 margin: 5px auto;
-                max-height: calc(100vh - 20px);
             }
 
-            .modal-header {
+            .form-header {
                 padding: 15px 20px 12px;
             }
 
-            .modal-body {
+            .form-body {
                 padding: 0 20px 20px;
             }
 
-            .modal-title {
+            .form-title {
                 font-size: 20px;
                 margin-top: 20px;
                 margin-bottom: 15px;
             }
 
-            .modal-description {
+            .form-description {
                 font-size: 12px;
                 padding-left: 5px;
                 padding-right: 5px;
@@ -416,14 +326,6 @@
                 padding: 12px;
                 font-size: 14px;
             }
-
-            .modal-close {
-                top: 15px;
-                right: 15px;
-                width: 24px;
-                height: 24px;
-                font-size: 14px;
-            }
         }
 
         @media (max-height: 700px) {
@@ -459,74 +361,11 @@
             }
         }
 
-        /* Icon styles */
-        /* .user-icon::before {
-            content: "👤";
-        } */
-
-        /* .play-icon::before {
-            content: "▶️";
-        } */
-
-        /* Demo button */
-        .demo-trigger {
-            padding: 12px 24px;
-            background: #4f46e5;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            margin: 20px;
-        }
         .wraper{
-            display: flex; /* keeps icon + content side by side */
+            display: flex;
             align-items: flex-start;
             gap: 10px;
         }
-        .overlay{
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #a4a6aa28;
-            backdrop-filter: blur(1.5px);
-            display: flex;
-            align-items: center; 
-            justify-content: center;
-            font-size: 20px;
-            font-weight: 500;
-            opacity: 0;               /* hidden by default */
-            pointer-events: none;     /* clicks  hidden */
-            transition: opacity 0.3s ease;
-        }
-
-        .option-item-dim:hover .overlay {
-            opacity: 1;               /* show on hover */
-            pointer-events: auto;
-        }
-        .coming-soon-cont{
-            display: flex;
-            height: 100%;
-            align-items: center; 
-        }
-        .coming-soon-img{
-            width: 55px;
-            height: 55px;
-            transform-origin: top center;
-            animation: swing 2s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-        }
-        
-
-        @keyframes swing {
-            0%  { transform: rotate(-30deg); } /* left */
-            50%  { transform: rotate(30deg); } 
-            100% { transform: rotate(-30deg); }   /* back */
-            }
-
-        /* Add spinner styles */
         .spinner {
             border: 2px solid transparent;
             border-top: 2px solid #ffffff;
@@ -559,222 +398,281 @@
             display: flex;
             align-items: center;
         }
+    
+        .loading-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+        }
     </style>
 </head>
 
 <body>
-    <button class="demo-trigger" onclick="openModal()">Ouvrir le modal</button>
+    <div class="loading-indicator" id="loadingIndicator">
+        <span id="loadingText">Loading...</span>
+    </div>
 
-    <div class="modal-overlay" id="modalOverlay" style="display: none;">
-        <div class="modal-box">
-            <button class="modal-close" onclick="closeModal()">
-                ×
-            </button>
+    <div class="form-container-wrapper">
+        <div class="form-header">
+            <h1 class="form-title" data-i18n="form_title">
+                Need a <strong>Rainbow Webinar</strong> demo?
+            </h1>
+            <p class="form-description" data-i18n="form_description">
+                Leave your information to schedule a demonstration with our sales team.
+                We'll show you the important features for you and answer your questions.
+            </p>
+        </div>
 
-            <div class="modal-header">
-                <h1 class="modal-title">
-                    Besoin d'une démo<strong> Rainbow Webinar </strong>?
-                </h1>
-                <p class="modal-description">
-                    Laissez vos informations pour planifier une démonstration avec notre équipe de vente.
-                    Nous vous montrerons les fonctionnalités importantes pour vous et répondrons à vos questions.
-                </p>
-            </div>
-
-            <div class="modal-body">
-                <div class="option-selector">
-                    <div class="option-item-dim" data-option="demo">
-                        <div class="overlay">
-                            <div class="coming-soon-cont">
-                            <img class="coming-soon-img" src="coming-soon.png" alt="">
-                            </div>
-                        </div>
-                        <div class="wraper">
-                        <div class="option-icon user-icon">
-                            <img src="demo.png" width="26px" alt="">
-                        </div>
-                        <div class="option-content">
-                            <h6>Réserver une démo</h6>
-                            <p>Discuter de nos plans Entreprise et Business avec notre équipe commerciale</p>
-                        </div>
-                        </div>
+        <div class="form-body">
+            <div class="option-selector">
+                <div class="option-item-dim" data-option="demo">
+                    <div class="wraper">
+                    <div class="option-icon user-icon">
+                        <img src="demo.png" width="26px" alt="">
                     </div>
-
-                    <div class="option-item selected" data-option="video">
-                        <div class="option-icon play-icon">
-                            <img src="video.png" width="24px" alt="">
-                        </div>
-                        <div class="option-content">
-                            <h6>Regarder une vidéo</h6>
-                            <p>Accéder à une vidéo préenregistrée de présentation du produit</p>
-                        </div>
+                    <div class="option-content">
+                        <h6 data-i18n="option_demo_title">Book a demo</h6>
+                        <p data-i18n="option_demo_description">Discuss our Enterprise and Business plans with our sales team</p>
+                    </div>
                     </div>
                 </div>
 
-                <form class="form-container" id="demoForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="firstName">
-                                Prénom <span class="required">*</span>
-                            </label>
-                            <input type="text" id="firstName" name="firstName" class="form-input" placeholder="Jane"
-                                required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="lastName">
-                                Nom <span class="required">*</span>
-                            </label>
-                            <input type="text" id="lastName" name="lastName" class="form-input" placeholder="Doe"
-                                required>
-                        </div>
+                <div class="option-item selected" data-option="video">
+                    <div class="option-icon play-icon">
+                        <img src="video.png" width="24px" alt="">
                     </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="email">
-                                Email <span class="required">*</span>
-                            </label>
-                            <input type="email" id="email" name="email" class="form-input"
-                                placeholder="jane@example.com" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="phone">
-                                Téléphone
-                            </label>
-                            <input type="tel" id="phone" name="phone" class="form-input" placeholder="+33123456789">
-                        </div>
+                    <div class="option-content">
+                        <h6 data-i18n="option_video_title">Watch a video</h6>
+                        <p data-i18n="option_video_description">Access a pre-recorded product presentation video</p>
                     </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="company">
-                                Entreprise <span class="required">*</span>
-                            </label>
-                            <input type="text" id="company" name="company" class="form-input" placeholder="Acme"
-                                required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label" for="companySize">
-                                Taille d'entreprise <span class="required">*</span>
-                            </label>
-                            <select id="companySize" name="companySize" class="form-select" required>
-                                <option value="">Veuillez sélectionner</option>
-                                <option value="1-10">1-10</option>
-                                <option value="11-50">11-50</option>
-                                <option value="51-250">51-250</option>
-                                <option value="251-1K">251-1K</option>
-                                <option value="1K-5K">1K-5K</option>
-                                <option value="5K-10K">5K-10K</option>
-                                <option value="10K-50K">10K-50K</option>
-                                <option value="50K-100K">50K-100K</option>
-                                <option value="100K+">100K+</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-row single">
-                        <div class="form-group">
-                            <label class="form-label" for="country">
-                                Pays/Région <span class="required">*</span>
-                            </label>
-                            <select id="country" name="country" class="form-select" required>
-                                <option value="">Veuillez sélectionner</option>
-                                <option value="France" selected>France</option>
-                                <option value="Belgium">Belgium</option>
-                                <option value="Canada">Canada</option>
-                                <option value="Germany">Germany</option>
-                                <option value="Spain">Spain</option>
-                                <option value="United Kingdom">United Kingdom</option>
-                                <option value="United States">United States</option>
-                                <option value="Other">Autre</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="checkbox-container">
-                        <div class="checkbox-wrapper">
-                            <input type="checkbox" id="consent" name="consent" class="checkbox-input" required>
-                            <label for="consent" class="checkbox-label">
-                                J'accepte les <a href="#" target="_blank">Conditions Générales de Rainbow</a>
-                                et je reconnais avoir été informé(e) et consentir au traitement de mes données
-                                personnelles
-                                détaillées dans la <a href="#" target="_blank">Politique de confidentialité de
-                                    Rainbow</a>.
-                                <span class="required">*</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="submit-button" id="submitButton">
-                        <span class="button-content">
-                            Accéder à la vidéo
-                        </span>
-                    </button>
-                </form>
+                </div>
             </div>
+
+            <form class="form-container" id="demoForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="firstName">
+                            <span data-i18n="first_name">First Name</span> <span class="required">*</span>
+                        </label>
+                        <input type="text" id="firstName" name="firstName" class="form-input" data-i18n-placeholder="first_name_placeholder"
+                            placeholder="Jane" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="lastName">
+                            <span data-i18n="last_name">Last Name</span> <span class="required">*</span>
+                        </label>
+                        <input type="text" id="lastName" name="lastName" class="form-input" data-i18n-placeholder="last_name_placeholder"
+                            placeholder="Doe" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="email">
+                            <span data-i18n="email">Email</span> <span class="required">*</span>
+                        </label>
+                        <input type="email" id="email" name="email" class="form-input" data-i18n-placeholder="email_placeholder"
+                            placeholder="jane@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="phone">
+                            <span data-i18n="phone">Phone</span>
+                        </label>
+                        <input type="tel" id="phone" name="phone" class="form-input" data-i18n-placeholder="phone_placeholder" placeholder="+33123456789">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="company">
+                            <span data-i18n="company">Company</span> <span class="required">*</span>
+                        </label>
+                        <input type="text" id="company" name="company" class="form-input" data-i18n-placeholder="company_placeholder"
+                            placeholder="Acme" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="companySize">
+                            <span data-i18n="company_size">Company Size</span> <span class="required">*</span>
+                        </label>
+                        <select id="companySize" name="companySize" class="form-select" required>
+                            <option value="" data-i18n="please_select">Please select</option>
+                            <option value="1-10">1-10</option>
+                            <option value="11-50">11-50</option>
+                            <option value="51-250">51-250</option>
+                            <option value="251-1K">251-1K</option>
+                            <option value="1K-5K">1K-5K</option>
+                            <option value="5K-10K">5K-10K</option>
+                            <option value="10K-50K">10K-50K</option>
+                            <option value="50K-100K">50K-100K</option>
+                            <option value="100K+">100K+</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row single">
+                    <div class="form-group">
+                        <label class="form-label" for="country">
+                            <span data-i18n="country_region">Country/Region</span> <span class="required">*</span>
+                        </label>
+                        <select id="country" name="country" class="form-select" required>
+                            <option value="" data-i18n="please_select">Please select</option>
+                            <option value="France">France</option>
+                            <option value="Belgium">Belgium</option>
+                            <option value="Canada">Canada</option>
+                            <option value="Germany">Germany</option>
+                            <option value="Spain">Spain</option>
+                            <option value="United Kingdom">United Kingdom</option>
+                            <option value="United States">United States</option>
+                            <option value="Other" data-i18n="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="checkbox-container">
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="consent" name="consent" class="checkbox-input" required>
+                        <label for="consent" class="checkbox-label">
+                            <span data-i18n="consent_text">I accept the <a href="#" target="_blank">Rainbow Terms and Conditions</a>
+                            and acknowledge that I have been informed and consent to the processing of my personal
+                            data detailed in the <a href="#" target="_blank">Rainbow Privacy Policy</a>.</span>
+                            <span class="required">*</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-button" id="submitButton">
+                    <span class="button-content" data-i18n="access_video">
+                        Access video
+                    </span>
+                </button>
+            </form>
         </div>
     </div>
-    
-    <!-- Load Storylane script -->
+
     <script async src="https://js.storylane.io/js/v2/storylane.js"></script>
 
     <script>
-        // Modal functionality
-        function openModal() {
-            document.getElementById('modalOverlay').style.display = 'flex';
-            document.body.style.overflow = 'hidden';
+        const defaultTranslations = {
+            en: {
+                form_title: 'Need a <strong>Rainbow Webinar</strong> demo?',
+                form_description: 'Leave your information to schedule a demonstration with our sales team. We\'ll show you the important features for you and answer your questions.',
+                option_demo_title: 'Book a demo',
+                option_demo_description: 'Discuss our Enterprise and Business plans with our sales team',
+                option_video_title: 'Watch a video',
+                option_video_description: 'Access a pre-recorded product presentation video',
+                first_name: 'First Name',
+                last_name: 'Last Name',
+                email: 'Email',
+                phone: 'Phone',
+                company: 'Company',
+                company_size: 'Company Size',
+                country_region: 'Country/Region',
+                please_select: 'Please select',
+                other: 'Other',
+                consent_text: 'I accept the <a href="#" target="_blank">Rainbow Terms and Conditions</a> and acknowledge that I have been informed and consent to the processing of my personal data detailed in the <a href="#" target="_blank">Rainbow Privacy Policy</a>.',
+                access_video: 'Access video',
+                book_demo: 'Book demo',
+                first_name_placeholder: 'Jane',
+                last_name_placeholder: 'Doe',
+                email_placeholder: 'jane@example.com',
+                phone_placeholder: '+33123456789',
+                company_placeholder: 'Acme',
+                loading: 'Loading...'
+            }
+        };
+
+        function getLanguageFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('lang') || 'en';
         }
 
-        function closeModal() {
-            document.getElementById('modalOverlay').style.display = 'none';
-            document.body.style.overflow = 'auto';
+        function applyTranslations(translations) {
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                if (translations[key]) {
+                    element.innerHTML = translations[key];
+                }
+            });
+
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+                const key = element.getAttribute('data-i18n-placeholder');
+                if (translations[key]) {
+                    element.placeholder = translations[key];
+                }
+            });
+
+            const currentLang = getLanguageFromURL();
+            document.documentElement.lang = currentLang;
+
+            document.getElementById('loadingText').textContent = translations.loading || 'Loading...';
         }
 
-        // Close modal when clicking outside
-        document.getElementById('modalOverlay').addEventListener('click', function (e) {
-            if (e.target === this) {
-                closeModal();
+        async function loadTranslations(language) {
+            try {
+                const response = await fetch(`https://formtweek.pythonanywhere.com/api/translations?lang=${language}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const translations = await response.json();
+                return translations;
+            } catch (error) {
+                console.warn(`Failed to load translations for ${language}:`, error);
+                return defaultTranslations[language] || defaultTranslations.en;
             }
-        });
+        }
 
-        // Close modal with escape key
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') {
-                closeModal();
-            }
-        });
+        async function initializeTranslations() {
+            const language = getLanguageFromURL();
+            const translations = await loadTranslations(language);
+            applyTranslations(translations);
+        }
 
-        // Option selector functionality
+        
         document.querySelectorAll('.option-item').forEach(item => {
             item.addEventListener('click', function () {
                 document.querySelectorAll('.option-item').forEach(opt => opt.classList.remove('selected'));
                 this.classList.add('selected');
 
                 const submitButton = document.querySelector('.submit-button .button-content');
+                const language = getLanguageFromURL();
+                
                 if (this.dataset.option === 'video') {
-                    submitButton.textContent = 'Accéder à la vidéo';
+                    
+                    const currentText = submitButton.getAttribute('data-i18n');
+                    if (currentText !== 'access_video') {
+                        submitButton.setAttribute('data-i18n', 'access_video');
+                        submitButton.textContent = 'Access video'; 
+                    }
                 } else {
-                    submitButton.textContent = 'Réserver une démo';
+                    submitButton.setAttribute('data-i18n', 'book_demo');
+                    submitButton.textContent = 'Book demo'; 
                 }
             });
         });
 
-        // Helper function to show loading state
         function setLoadingState(isLoading) {
             const submitButton = document.getElementById('submitButton');
             const buttonContent = submitButton.querySelector('.button-content');
             
             if (isLoading) {
                 submitButton.disabled = true;
-                buttonContent.innerHTML = '<div class="spinner"></div>Chargement...';
+                const loadingText = document.getElementById('loadingText').textContent;
+                buttonContent.innerHTML = '<div class="spinner"></div>' + loadingText;
             } else {
                 submitButton.disabled = false;
                 const selectedOption = document.querySelector('.option-item.selected').dataset.option;
-                buttonContent.textContent = selectedOption === 'video' ? 'Accéder à la vidéo' : 'Réserver une démo';
+                const key = selectedOption === 'video' ? 'access_video' : 'book_demo';
+                buttonContent.setAttribute('data-i18n', key);
+                buttonContent.textContent = selectedOption === 'video' ? 'Access video' : 'Book demo'; // Fallback
             }
         }
 
-        // Helper function to trigger Storylane popup
         function triggerStorylinePopup(demoUrl) {
             if (window.Storylane && typeof window.Storylane.Play === 'function') {
                 window.Storylane.Play({
@@ -791,19 +689,16 @@
             }
         }
 
-        // Form submission with webhook
         document.getElementById('demoForm').addEventListener('submit', async function (e) {
             e.preventDefault();
 
-            // Show loading state
             setLoadingState(true);
 
             try {
-                // Get form data
                 const formData = new FormData(this);
                 const selectedOption = document.querySelector('.option-item.selected').dataset.option;
+                const language = getLanguageFromURL();
                 
-                // Create the payload object
                 const payload = {
                     firstName: formData.get('firstName'),
                     lastName: formData.get('lastName'),
@@ -813,10 +708,10 @@
                     companySize: formData.get('companySize'),
                     country: formData.get('country'),
                     consent: formData.get('consent') === 'on',
-                    optionSelected: selectedOption
+                    optionSelected: selectedOption,
+                    language: language
                 };
 
-                // Send POST request to Make webhook
                 const response = await fetch('https://hook.eu1.make.com/c8dwxvl81l74ktnjej36og2p56bgn67y', {
                     method: 'POST',
                     headers: {
@@ -829,29 +724,19 @@
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
-                // Parse the response
                 const result = await response.json();
                 
-                // Extract the demo URL from the response
-                // Assuming the webhook returns something like { "link": "https://app.storylane.io/demo/..." }
-                // Adjust this based on your actual webhook response structure
                 let demoUrl = result.link || result.url || result.demo_url;
                 
                 if (!demoUrl) {
                     throw new Error('No demo URL found in response');
                 }
 
-                // Close modal first
-                closeModal();
-                
-                // Reset form
                 this.reset();
-                
-                // Reset option selection
+
                 document.querySelectorAll('.option-item').forEach(opt => opt.classList.remove('selected'));
                 document.querySelector('[data-option="video"]').classList.add('selected');
-                
-                // Wait a moment for modal to close, then trigger popup
+
                 setTimeout(() => {
                     triggerStorylinePopup(demoUrl);
                 }, 300);
@@ -859,15 +744,10 @@
             } catch (error) {
                 console.error('Error submitting form:', error);
             } finally {
-                // Remove loading state
                 setLoadingState(false);
             }
         });
-
-        // Auto-open modal for demo (remove this in production)
-        setTimeout(() => {
-            openModal();
-        }, 1000);
+        document.addEventListener('DOMContentLoaded', initializeTranslations);
     </script>
 </body>
 
