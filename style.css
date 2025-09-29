@@ -1,0 +1,408 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-image: url("wb.webp");
+  background-size: cover;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(8px);
+}
+
+.form-container-wrapper {
+  background: white;
+  border-radius: 8px;
+  max-width: 700px;
+  width: 100%;
+  min-height: min-content;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+  margin: 20px auto;
+}
+
+.form-header {
+  padding: 18px 28px 14px;
+  text-align: left;
+}
+
+.form-title {
+  font-size: 22px;
+  font-weight: 400;
+  color: #1a1a1a;
+  margin-top: 24px;
+  margin-bottom: 18px;
+  line-height: 1.2;
+}
+
+.form-title strong {
+  color: #4f46e5;
+}
+
+.form-description {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.5;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.form-body {
+  padding: 0 26px 26px;
+}
+
+.option-selector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.option-item {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #c8d3da;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.option-item-dim {
+  flex: 1;
+  position: relative;
+  padding: 12px;
+  border: 1px solid #cfd7db;
+  border-radius: 8px;
+  cursor: not-allowed;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background-color: #efeff0;
+}
+
+.option-item.selected {
+  border-color: #4f46e5;
+  background: #f8faff;
+}
+
+.option-item:hover {
+  border-color: #9ca3af;
+}
+
+.option-icon {
+  width: 22px;
+  height: 22px;
+  color: #6b7280;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.option-content h6 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 3px;
+}
+
+.option-content p {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.4;
+}
+
+.form-container {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px 20px 0px 20px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.form-row.single {
+  grid-template-columns: 1fr;
+}
+
+.form-group {
+  position: relative;
+}
+
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 7px;
+}
+
+.required {
+  color: #ef4444;
+}
+
+.form-input,
+.form-select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 2px solid #e5e7eb;
+  border-radius: 4px;
+  font-size: 15px;
+  background: white;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.form-input:focus,
+.form-select:focus {
+  outline: none;
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.form-select {
+  cursor: pointer;
+}
+
+.checkbox-container {
+  margin: 20px 0;
+}
+
+.checkbox-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.checkbox-input {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  cursor: pointer;
+}
+
+.checkbox-label {
+  font-size: 10px;
+  color: #374151;
+  line-height: 1.5;
+}
+
+.checkbox-label a {
+  color: #4f46e5;
+  text-decoration: none;
+}
+
+.checkbox-label a:hover {
+  text-decoration: underline;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 14px;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 6px;
+}
+
+.submit-button:hover {
+  background: #4338ca;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.submit-button:active {
+  transform: translateY(0);
+}
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+    align-items: flex-start;
+  }
+
+  .form-container-wrapper {
+    max-width: 100%;
+    margin: 5px auto;
+  }
+
+  .form-header {
+    padding: 15px 20px 12px;
+  }
+
+  .form-body {
+    padding: 0 20px 20px;
+  }
+
+  .form-title {
+    font-size: 20px;
+    margin-top: 20px;
+    margin-bottom: 15px;
+  }
+
+  .form-description {
+    font-size: 12px;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .option-selector {
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 15px;
+  }
+
+  .option-item {
+    padding: 10px;
+    gap: 8px;
+  }
+
+  .option-content h6 {
+    font-size: 14px;
+  }
+
+  .option-content p {
+    font-size: 12px;
+  }
+
+  .form-container {
+    padding: 15px 15px 0px 15px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-bottom: 15px;
+  }
+
+  .form-input,
+  .form-select {
+    padding: 9px 12px;
+    font-size: 14px;
+  }
+
+  .form-label {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+
+  .checkbox-container {
+    margin: 15px 0;
+  }
+
+  .checkbox-label {
+    font-size: 9px;
+  }
+
+  .checkbox-input {
+    width: 14px;
+    height: 14px;
+  }
+
+  .submit-button {
+    padding: 12px;
+    font-size: 14px;
+  }
+}
+
+@media (max-height: 700px) {
+  .modal-overlay {
+    align-items: flex-start;
+    padding: 8px;
+  }
+
+  .modal-box {
+    margin: 8px auto;
+    max-height: calc(100vh - 16px);
+  }
+
+  .modal-header {
+    padding: 15px 24px 12px;
+  }
+
+  .modal-body {
+    padding: 0 24px 18px;
+  }
+
+  .option-selector {
+    margin-bottom: 15px;
+  }
+
+  .form-container {
+    padding: 15px;
+  }
+
+  .modal-title {
+    margin-top: 18px;
+    margin-bottom: 12px;
+  }
+}
+
+.wraper {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.spinner {
+  border: 2px solid transparent;
+  border-top: 2px solid #ffffff;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.submit-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.submit-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.button-content {
+  display: flex;
+  align-items: center;
+}
+
+.loading-indicator {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  display: none;
+}
