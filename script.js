@@ -20,8 +20,10 @@
   const getLanguageFromPath = () => {
     try {
       const pathParts = window.location.pathname.split('/').filter(p => p !== '');
-      if (pathParts.length > 0 && CONFIG.supportedLanguages.includes(pathParts[0])) {
-        return pathParts[0];
+      for (let part of pathParts) {
+        if (CONFIG.supportedLanguages.includes(part)) {
+          return part;
+        }
       }
     } catch (error) {
       console.error('Error detecting language:', error);
