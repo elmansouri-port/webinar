@@ -1,208 +1,258 @@
-const defaultTranslations = {
-  en: {
-    form_title: "Need a <strong>Rainbow Webinar</strong> demo?",
-    form_description:
-      "Leave your information to schedule a demonstration with our sales team. We'll show you the important features for you and answer your questions.",
-    option_demo_title: "Book a demo",
-    option_demo_description:
-      "Discuss our Enterprise and Business plans with our sales team",
-    option_video_title: "Watch a video",
-    option_video_description:
-      "Access a pre-recorded product presentation video",
-    first_name: "First Name",
-    last_name: "Last Name",
-    email: "Email",
-    phone: "Phone",
-    company: "Company",
-    company_size: "Company Size",
-    country_region: "Country/Region",
-    please_select: "Please select",
-    other: "Other",
-    consent_text:
-      'I accept the <a href="#" target="_blank">Rainbow Terms and Conditions</a> and acknowledge that I have been informed and consent to the processing of my personal data detailed in the <a href="#" target="_blank">Rainbow Privacy Policy</a>.',
-    access_video: "Access video",
-    book_demo: "Book demo",
-    first_name_placeholder: "Jane",
-    last_name_placeholder: "Doe",
-    email_placeholder: "jane@example.com",
-    phone_placeholder: "+33123456789",
-    company_placeholder: "Acme",
-    loading: "Loading...",
-  },
-};
+(function() {
+  'use strict';
 
-function getLanguageFromURL() {
-  const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get("lang") || "en";
-}
-
-function applyTranslations(translations) {
-  document.querySelectorAll("[data-i18n]").forEach((element) => {
-    const key = element.getAttribute("data-i18n");
-    if (translations[key]) {
-      element.innerHTML = translations[key];
-    }
-  });
-
-  document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
-    const key = element.getAttribute("data-i18n-placeholder");
-    if (translations[key]) {
-      element.placeholder = translations[key];
-    }
-  });
-
-  const currentLang = getLanguageFromURL();
-  document.documentElement.lang = currentLang;
-
-  document.getElementById("loadingText").textContent =
-    translations.loading || "Loading...";
-}
-
-async function loadTranslations(language) {
-  try {
-    const response = await fetch(
-      `https://formtweek.pythonanywhere.com/api/translations?lang=${language}`
-    );
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const translations = await response.json();
-    return translations;
-  } catch (error) {
-    console.warn(`Failed to load translations for ${language}:`, error);
-    return defaultTranslations[language] || defaultTranslations.en;
-  }
-}
-
-async function initializeTranslations() {
-  const language = getLanguageFromURL();
-  const translations = await loadTranslations(language);
-  applyTranslations(translations);
-}
-
-document.querySelectorAll(".option-item").forEach((item) => {
-  item.addEventListener("click", function () {
-    document
-      .querySelectorAll(".option-item")
-      .forEach((opt) => opt.classList.remove("selected"));
-    this.classList.add("selected");
-
-    const submitButton = document.querySelector(
-      ".submit-button .button-content"
-    );
-    const language = getLanguageFromURL();
-
-    if (this.dataset.option === "video") {
-      const currentText = submitButton.getAttribute("data-i18n");
-      if (currentText !== "access_video") {
-        submitButton.setAttribute("data-i18n", "access_video");
-        submitButton.textContent = "Access video";
-      }
-    } else {
-      submitButton.setAttribute("data-i18n", "book_demo");
-      submitButton.textContent = "Book demo";
-    }
-  });
-});
-
-function setLoadingState(isLoading) {
-  const submitButton = document.getElementById("submitButton");
-  const buttonContent = submitButton.querySelector(".button-content");
-
-  if (isLoading) {
-    submitButton.disabled = true;
-    const loadingText = document.getElementById("loadingText").textContent;
-    buttonContent.innerHTML = '<div class="spinner"></div>' + loadingText;
-  } else {
-    submitButton.disabled = false;
-    const selectedOption = document.querySelector(".option-item.selected")
-      .dataset.option;
-    const key = selectedOption === "video" ? "access_video" : "book_demo";
-    buttonContent.setAttribute("data-i18n", key);
-    buttonContent.textContent =
-      selectedOption === "video" ? "Access video" : "Book demo";
-  }
-}
-
-function triggerStorylinePopup(demoUrl) {
-  if (window.Storylane && typeof window.Storylane.Play === "function") {
-    window.Storylane.Play({
-      type: "popup",
-      demo_type: "image",
+  const CONFIG = {
+    webhookUrl: 'https://hook.eu1.make.com/c8dwxvl81l74ktnjej36og2p56bgn67y',
+    storylaneConfig: {
+      type: 'popup',
+      demo_type: 'image',
       width: 1916,
       height: 1025,
-      scale: "0.95",
-      demo_url: demoUrl,
-      padding_bottom: "calc(53.50% + 25px)",
-    });
-  } else {
-    console.error("Storylane not loaded or Play function not available");
+      scale: '0.95',
+      padding_bottom: 'calc(53.50% + 25px)'
+    },
+    defaultLanguage: 'en',
+    supportedLanguages: ['en', 'fr'],
+    popupDelay: 300,
+    requestTimeout: 30000
+  };
+
+  const getLanguageFromPath = () => {
+    try {
+      const pathParts = window.location.pathname.split('/').filter(p => p !== '');
+      if (pathParts.length > 0 && CONFIG.supportedLanguages.includes(pathParts[0])) {
+        return pathParts[0];
+      }
+    } catch (error) {
+      console.error('Error detecting language:', error);
+    }
+    return CONFIG.defaultLanguage;
+  };
+
+  const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  const sanitize = (input) => typeof input === 'string' ? input.trim() : '';
+
+  const showError = (message) => {
+    console.error(message);
+    alert(message);
+  };
+
+  class OptionSelector {
+    constructor() {
+      this.options = document.querySelectorAll('.option-item');
+      this.button = document.querySelector('.submit-button .button-content');
+      this.init();
+    }
+
+    init() {
+      this.options.forEach(opt => {
+        opt.addEventListener('click', (e) => {
+          this.options.forEach(o => o.classList.remove('selected'));
+          e.currentTarget.classList.add('selected');
+          this.updateButton(e.currentTarget.dataset.option);
+        });
+      });
+    }
+
+    updateButton(type) {
+      if (!this.button) return;
+      const attr = type === 'video' ? 'data-video-text' : 'data-demo-text';
+      const fallback = type === 'video' ? 'Access video' : 'Book demo';
+      this.button.textContent = this.button.getAttribute(attr) || fallback;
+    }
+
+    getSelected() {
+      const selected = document.querySelector('.option-item.selected');
+      return selected ? selected.dataset.option : 'video';
+    }
+
+    reset() {
+      this.options.forEach(o => o.classList.remove('selected'));
+      const defaultOpt = document.querySelector('[data-option="video"]');
+      if (defaultOpt) {
+        defaultOpt.classList.add('selected');
+        this.updateButton('video');
+      }
+    }
   }
-}
 
-document
-  .getElementById("demoForm")
-  .addEventListener("submit", async function (e) {
-    e.preventDefault();
+  class LoadingManager {
+    constructor() {
+      this.button = document.getElementById('submitButton');
+      this.content = this.button?.querySelector('.button-content');
+      this.text = document.getElementById('loadingText')?.textContent || 'Loading...';
+    }
 
-    setLoadingState(true);
+    show() {
+      if (!this.button || !this.content) return;
+      this.button.disabled = true;
+      this.button.classList.add('loading');
+      this.content.innerHTML = `<div class="spinner"></div>${this.text}`;
+    }
+
+    hide() {
+      if (!this.button || !this.content) return;
+      this.button.disabled = false;
+      this.button.classList.remove('loading');
+      const type = optionSelector.getSelected();
+      const attr = type === 'video' ? 'data-video-text' : 'data-demo-text';
+      const fallback = type === 'video' ? 'Access video' : 'Book demo';
+      this.content.textContent = this.content.getAttribute(attr) || fallback;
+    }
+  }
+
+  const triggerStoryline = (demoUrl) => {
+    if (!demoUrl) {
+      console.error('No demo URL provided');
+      return false;
+    }
+
+    if (!window.Storylane || typeof window.Storylane.Play !== 'function') {
+      console.error('Storylane not available');
+      showError('Demo player is not available. Please refresh the page.');
+      return false;
+    }
 
     try {
-      const formData = new FormData(this);
-      const selectedOption = document.querySelector(".option-item.selected")
-        .dataset.option;
-      const language = getLanguageFromURL();
-
-      const payload = {
-        firstName: formData.get("firstName"),
-        lastName: formData.get("lastName"),
-        email: formData.get("email"),
-        phone: formData.get("phone") || "",
-        company: formData.get("company"),
-        companySize: formData.get("companySize"),
-        country: formData.get("country"),
-        consent: formData.get("consent") === "on",
-        optionSelected: selectedOption,
-        language: language,
-      };
-
-      const response = await fetch(
-        "https://hook.eu1.make.com/c8dwxvl81l74ktnjej36og2p56bgn67y",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-
-      let demoUrl = result.link || result.url || result.demo_url;
-
-      if (!demoUrl) {
-        throw new Error("No demo URL found in response");
-      }
-
-      this.reset();
-
-      document
-        .querySelectorAll(".option-item")
-        .forEach((opt) => opt.classList.remove("selected"));
-      document.querySelector('[data-option="video"]').classList.add("selected");
-
-      setTimeout(() => {
-        triggerStorylinePopup(demoUrl);
-      }, 300);
+      window.Storylane.Play({ ...CONFIG.storylaneConfig, demo_url: demoUrl });
+      return true;
     } catch (error) {
-      console.error("Error submitting form:", error);
-    } finally {
-      setLoadingState(false);
+      console.error('Storylane error:', error);
+      showError('Failed to open demo. Please try again.');
+      return false;
     }
-  });
-document.addEventListener("DOMContentLoaded", initializeTranslations);
+  };
+
+  class FormHandler {
+    constructor(form) {
+      this.form = form;
+      this.loading = new LoadingManager();
+      this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+    }
+
+    validate(data) {
+      if (!data.firstName || !data.lastName) {
+        showError('Please enter your first and last name.');
+        return false;
+      }
+      if (!data.email || !isValidEmail(data.email)) {
+        showError('Please enter a valid email address.');
+        return false;
+      }
+      if (!data.company) {
+        showError('Please enter your company name.');
+        return false;
+      }
+      if (!data.companySize || !data.country) {
+        showError('Please complete all required fields.');
+        return false;
+      }
+      if (!data.consent) {
+        showError('Please accept the terms and conditions.');
+        return false;
+      }
+      return true;
+    }
+
+    buildPayload(formData) {
+      return {
+        firstName: sanitize(formData.get('firstName')),
+        lastName: sanitize(formData.get('lastName')),
+        email: sanitize(formData.get('email')),
+        phone: sanitize(formData.get('phone')) || '',
+        company: sanitize(formData.get('company')),
+        companySize: formData.get('companySize'),
+        country: formData.get('country'),
+        consent: formData.get('consent') === 'on',
+        optionSelected: optionSelector.getSelected(),
+        language: getLanguageFromPath(),
+        timestamp: new Date().toISOString()
+      };
+    }
+
+    async submit(payload) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), CONFIG.requestTimeout);
+
+      try {
+        const response = await fetch(CONFIG.webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+          signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        return await response.json();
+      } catch (error) {
+        clearTimeout(timeoutId);
+        if (error.name === 'AbortError') {
+          throw new Error('Request timeout. Please try again.');
+        }
+        throw error;
+      }
+    }
+
+    async handleSubmit(e) {
+      e.preventDefault();
+
+      const formData = new FormData(this.form);
+      const payload = this.buildPayload(formData);
+
+      if (!this.validate(payload)) return;
+
+      this.loading.show();
+
+      try {
+        const result = await this.submit(payload);
+        const demoUrl = result.link || result.url || result.demo_url || result.demoUrl;
+
+        if (!demoUrl) throw new Error('No demo URL in response');
+
+        this.form.reset();
+        optionSelector.reset();
+
+        setTimeout(() => triggerStoryline(demoUrl), CONFIG.popupDelay);
+
+        if (typeof gtag === 'function') {
+          gtag('event', 'form_submission', {
+            event_category: 'engagement',
+            event_label: payload.optionSelected
+          });
+        }
+      } catch (error) {
+        console.error('Form submission error:', error);
+        const msg = error.message.includes('timeout') 
+          ? 'Request timed out. Please check your connection.'
+          : 'An error occurred. Please try again.';
+        showError(msg);
+      } finally {
+        this.loading.hide();
+      }
+    }
+  }
+
+  const init = () => {
+    const loadingIndicator = document.getElementById('loadingIndicator');
+    if (loadingIndicator) loadingIndicator.style.display = 'none';
+
+    window.optionSelector = new OptionSelector();
+
+    const form = document.getElementById('demoForm');
+    if (form) {
+      new FormHandler(form);
+    } else {
+      console.error('Form element not found');
+    }
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+})();
