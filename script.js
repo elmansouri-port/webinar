@@ -169,7 +169,17 @@
         consent: formData.get('consent') === 'on',
         optionSelected: optionSelector.getSelected(),
         language: getLanguageFromPath(),
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        page_url: window.location.href,
+        hsid : "emptyfor now",
+        tag: "2",
+        cnt: parseInt(getCookie("cnt")) || null,
+        landing: getCookie("lpg"),
+        referrer: document.referrer,
+        utm_campaign: getCookie("utm_campaign"),
+        utm_medium: getCookie("utm_medium"),
+        utm_source: getCookie("utm_source"),
+        ip_adress: getCookie("visitor_ip")
       };
     }
 
