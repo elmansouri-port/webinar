@@ -54,7 +54,6 @@
   class OptionSelector {
     constructor() {
       this.options = document.querySelectorAll('.option-item');
-      this.button = document.querySelector('.submit-button .button-content');
       this.init();
     }
 
@@ -63,16 +62,8 @@
         opt.addEventListener('click', (e) => {
           this.options.forEach(o => o.classList.remove('selected'));
           e.currentTarget.classList.add('selected');
-          this.updateButton(e.currentTarget.dataset.option);
         });
       });
-    }
-
-    updateButton(type) {
-      if (!this.button) return;
-      const attr = type === 'video' ? 'data-video-text' : 'data-demo-text';
-      const fallback = type === 'video' ? 'Access video' : 'Book demo';
-      this.button.textContent = this.button.getAttribute(attr) || fallback;
     }
 
     getSelected() {
@@ -85,7 +76,6 @@
       const defaultOpt = document.querySelector('[data-option="video"]');
       if (defaultOpt) {
         defaultOpt.classList.add('selected');
-        this.updateButton('video');
       }
     }
   }
@@ -94,24 +84,22 @@
     constructor() {
       this.button = document.getElementById('submitButton');
       this.content = this.button?.querySelector('.button-content');
-      this.text = document.getElementById('loadingText')?.textContent || 'Loading...';
+      this.originalText = this.content?.textContent || '';
+      this.loadingText = document.getElementById('loadingText')?.textContent || 'Loading...';
     }
 
     show() {
       if (!this.button || !this.content) return;
       this.button.disabled = true;
       this.button.classList.add('loading');
-      this.content.innerHTML = `<div class="spinner"></div>${this.text}`;
+      this.content.innerHTML = `<div class="spinner"></div>${this.loadingText}`;
     }
 
     hide() {
       if (!this.button || !this.content) return;
       this.button.disabled = false;
       this.button.classList.remove('loading');
-      const type = optionSelector.getSelected();
-      const attr = type === 'video' ? 'data-video-text' : 'data-demo-text';
-      const fallback = type === 'video' ? 'Access video' : 'Book demo';
-      this.content.textContent = this.content.getAttribute(attr) || fallback;
+      this.content.textContent = this.originalText;
     }
   }
 
